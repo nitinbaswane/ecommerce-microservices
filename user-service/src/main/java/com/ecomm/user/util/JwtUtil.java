@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,17 +29,14 @@ public class JwtUtil {
         this.accessTokenExpirationMs = accessTokenExpirationMs;
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(Long id,String email, String role) {
 
-        List<String> roles = userDetails.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList();
+
         long now = System.currentTimeMillis();
         return Jwts.builder()
-                .subject(userDetails.getUsername())
-                .claim("email", userDetails.getUsername())
-                .claim("roles", roles)
+                .subject(String.valueOf(id))
+                .claim("email", email)
+                .claim("roles", role)
                 .issuedAt(new Date(now))
                 .expiration(
                         new Date(
